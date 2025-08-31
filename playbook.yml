@@ -1,5 +1,18 @@
----
-- hosts: aws_ec2
+- name: Install Redis on EC2
+  hosts: all
   become: yes
-  roles:
-    - ansible
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Redis server
+      apt:
+        name: redis-server
+        state: present
+
+    - name: Ensure Redis is running
+      service:
+        name: redis-server
+        state: started
+        enabled: yes
