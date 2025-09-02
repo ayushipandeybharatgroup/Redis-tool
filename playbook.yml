@@ -1,15 +1,22 @@
-- name: Install Redis on EC2
-  hosts: all
+---
+- name: Provision Redis on AWS EC2
+  hosts: aws_ec2     # use dynamic inventory group or [all] if static
   become: yes
+
+  roles:
+    - ansible   # your existing role (keeps compatibility)
+
   tasks:
     - name: Update apt cache
       apt:
         update_cache: yes
+      when: ansible_os_family == "Debian"
 
     - name: Install Redis server
       apt:
         name: redis-server
         state: present
+      when: ansible_os_family == "Debian"
 
     - name: Ensure Redis is running
       service:
