@@ -1,24 +1,46 @@
-# Create VPC Peering Connection
-resource "aws_vpc_peering_connection" "main" {
-  vpc_id        = var.vpc_id_1
-  peer_vpc_id   = var.vpc_id_2
-  auto_accept   = true
+data "aws_vpc" "default_vpc" {
+  default = true
+}
 
+
+resource "aws_vpc_peering_connection" "vpc_peering" {
+  vpc_id        = data.aws_vpc.default_vpc.id              
+  peer_vpc_id   = var.vpc_id        
+  peer_region   = var.region_name         
   tags = {
-    Name = "my-vpc-peering"
+    Name = "peering connection"
   }
 }
 
-# Add route for VPC1 -> VPC2
-resource "aws_route" "vpc1-to-vpc2" {
-  route_table_id            = var.rt_id_vpc1
-  destination_cidr_block    = var.vpc2_cidr
-  vpc_peering_connection_id = aws_vpc_peering_connection.main.id
+resource "aws_vpc_peering_connection_accepter" "accepter" {
+  vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peering.id
+  auto_accept               = true
 }
 
-# Add route for VPC2 -> VPC1
-resource "aws_route" "vpc2-to-vpc1" {
-  route_table_id            = var.rt_id_vpc2
-  destination_cidr_block    = var.vpc1_cidr
+data "aws_route_table" "default_RT" {
+  vpc_id = data.aws_vpc.default_vpc.id
+  filter {
+    name = "association.main"
+    values = [ "true" ]
+
+  }
+}
+
+resource "aws_route" "default_rt" {
+  route_table_id         = "rtb-0078f850542a62a00"
+  destination_cidr_block = "10.0.0.0/16"
   vpc_peering_connection_id = aws_vpc_peering_connection.main.id
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [destination_cidr_block]
+  }
+}
+
+data "aws_security_group" "default_sg" {
+  vpc_id = data.aws_vpc.default_vpc.id
+  filter {
+    name = "group-name"
+    values = [ "default" ]
+  }
 }
