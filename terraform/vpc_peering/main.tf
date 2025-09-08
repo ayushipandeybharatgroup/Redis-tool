@@ -27,9 +27,14 @@ data "aws_route_table" "default_RT" {
 }
 
 resource "aws_route" "default_rt" {
-route_table_id = data.aws_route_table.default_RT.id
-destination_cidr_block = var.vpc_cidr
-vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peering.id
+  route_table_id         = "rtb-0078f850542a62a00"
+  destination_cidr_block = "10.0.0.0/16"
+  vpc_peering_connection_id = aws_vpc_peering_connection.main.id
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [destination_cidr_block]
+  }
 }
 
 data "aws_security_group" "default_sg" {
