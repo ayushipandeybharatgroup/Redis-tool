@@ -44,3 +44,13 @@ data "aws_security_group" "default_sg" {
     values = [ "default" ]
   }
 }
+resource "aws_vpc_peering_connection" "main" {
+  peer_vpc_id = var.peer_vpc_id      # pass as variable
+  vpc_id      = var.vpc_id           # pass as variable
+  auto_accept = true
+
+  tags = {
+    Name = "main-vpc-peering"
+  }
+}
+
