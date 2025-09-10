@@ -14,3 +14,7 @@ variable "default_vpc_cidr" {
   type = string
   default = "172.31.0.0/16"
 }
+variable "vpc_id" {}
+variable "peer_vpc_id" {}
+variable "peer_cidr" {}
+variable "route_table_id" {}
