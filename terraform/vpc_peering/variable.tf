@@ -1,20 +1,14 @@
+variable "peer_vpc_id" {
+  description = "ID of the peer VPC"
+  type        = string
+}
+
 variable "region_name" {
-  default = "ap-south-1"
+  description = "Region of the peer VPC"
+  type        = string
 }
 
-variable "vpc_id" {
-  type = string
+variable "peer_cidr" {
+  description = "CIDR block of the peer VPC"
+  type        = string
 }
-
-variable "vpc_cidr" {
-    type = string
-}
-
-variable "default_vpc_cidr" {
-  type = string
-  default = "172.31.0.0/16"
-}
-variable "vpc_id" {}
-variable "peer_vpc_id" {}
-variable "peer_cidr" {}
-variable "route_table_id" {}
