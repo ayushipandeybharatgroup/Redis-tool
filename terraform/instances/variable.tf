@@ -34,5 +34,5 @@ variable "instance-type" {
 
 variable "key-name" {
   type = string
-  default = "ninja"
+  default = "jenkins"
 }
