@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git url: 'git@github.com:ayushipandeybharatgroup/Redis-tool.git', branch: 'main'
+                git url: 'https://github.com/ayushipandeybharatgroup/Redis-tool.git', branch: 'main'
             }
         }
 
