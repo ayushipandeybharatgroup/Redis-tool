@@ -8,7 +8,7 @@ resource "aws_instance" "redis-public" {
   key_name = var.key-name
   provisioner "file" {
     source      = "/var/lib/jenkins/jenkins.pem"  
-    destination = "/home/ubuntu/ninja.pem" 
+    destination = "/home/ubuntu/jenkins.pem" 
     connection {
       type        = "ssh"
       user        = "ubuntu"  
