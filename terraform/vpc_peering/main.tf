@@ -2,33 +2,36 @@ data "aws_vpc" "default_vpc" {
   default = true
 }
 
+# Create VPC peering connection
+resource "aws_vpc_peering_connection" "main" {
+  vpc_id      = data.aws_vpc.default_vpc.id   # local VPC
+  peer_vpc_id = var.peer_vpc_id               # target VPC (from variable)
+  peer_region = var.region_name
 
-resource "aws_vpc_peering_connection" "vpc_peering" {
-  vpc_id        = data.aws_vpc.default_vpc.id              
-  peer_vpc_id   = var.vpc_id        
-  peer_region   = var.region_name         
   tags = {
-    Name = "peering connection"
+    Name = "main-vpc-peering"
   }
 }
 
+# Accept the peering connection
 resource "aws_vpc_peering_connection_accepter" "accepter" {
-  vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peering.id
+  vpc_peering_connection_id = aws_vpc_peering_connection.main.id
   auto_accept               = true
 }
 
+# Get the default route table of the default VPC
 data "aws_route_table" "default_RT" {
   vpc_id = data.aws_vpc.default_vpc.id
   filter {
-    name = "association.main"
-    values = [ "true" ]
-
+    name   = "association.main"
+    values = ["true"]
   }
 }
 
+# Create a route through the peering connection
 resource "aws_route" "default_rt" {
-  route_table_id         = "rtb-0078f850542a62a00"
-  destination_cidr_block = "10.0.0.0/16"
+  route_table_id            = data.aws_route_table.default_RT.id
+  destination_cidr_block    = var.peer_cidr   # pass as variable
   vpc_peering_connection_id = aws_vpc_peering_connection.main.id
 
   lifecycle {
@@ -37,20 +40,11 @@ resource "aws_route" "default_rt" {
   }
 }
 
+# Fetch default security group (if needed)
 data "aws_security_group" "default_sg" {
   vpc_id = data.aws_vpc.default_vpc.id
   filter {
-    name = "group-name"
-    values = [ "default" ]
+    name   = "group-name"
+    values = ["default"]
   }
 }
-resource "aws_vpc_peering_connection" "main" {
-  peer_vpc_id = var.peer_vpc_id      # pass as variable
-  vpc_id      = var.vpc_id           # pass as variable
-  auto_accept = true
-
-  tags = {
-    Name = "main-vpc-peering"
-  }
-}
-
