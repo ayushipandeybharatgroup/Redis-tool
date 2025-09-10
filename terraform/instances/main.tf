@@ -7,25 +7,25 @@ resource "aws_instance" "redis-public" {
   security_groups = [var.public-sg-id]
   key_name = var.key-name
   provisioner "file" {
-    source      = "/var/lib/jenkins/jenkins.pem"  
-    destination = "/home/ubuntu/jenkins.pem" 
+    source      = "/var/lib/jenkins/ninja.pem"  
+    destination = "/home/ubuntu/ninja.pem" 
     connection {
       type        = "ssh"
       user        = "ubuntu"  
-      private_key = file("/var/lib/jenkins/jenkins.pem")  
+      private_key = file("/var/lib/jenkins/ninja.pem")  
       host        = self.public_ip  
     }
   }
 
   provisioner "remote-exec" {
     inline = [
-      "chmod 400 /home/ubuntu/jenkins.pem",  
+      "chmod 400 /home/ubuntu/ninja.pem",  
       "echo 'File copied successfully!'"
     ]
     connection {
       type        = "ssh"
       user        = "ubuntu"  
-      private_key = file("/var/lib/jenkins/jenkins.pem")  
+      private_key = file("/var/lib/jenkins/ninja.pem")  
       host        = self.public_ip  
     }
   }
