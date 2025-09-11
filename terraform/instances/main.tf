@@ -29,10 +29,10 @@ resource "aws_instance" "redis-public" {
      # host        = self.public_ip  
    # }
   #}
-  #tags = {
-  #  Name = "redis-public"
- # }
-#}
+  tags = {
+    Name = "redis-public"
+  }
+}
 
 # Private EC2 1 Instance
 resource "aws_instance" "redis-private-1" {
