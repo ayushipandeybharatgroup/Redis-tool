@@ -15,3 +15,18 @@ compose:
 strict: false
 cache: true
 cache_timeout: 600
+plugin: amazon.aws.aws_ec2
+regions:
+  - ap-south-1
+filters:
+  tag:Role: redis
+keyed_groups:
+  - key: tags.Role
+hostnames:
+  - private-ip-address
+
+compose:
+  ansible_host: private_ip_address
+
+# Bastion/jump host
+ansible_ssh_common_args: '-o ProxyCommand="ssh -i /var/lib/jenkins/jenkins.pem -o StrictHostKeyChecking=no -W %h:%p ubuntu@<PUBLIC-EC2-IP>"'
