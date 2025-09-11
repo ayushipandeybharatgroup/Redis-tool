@@ -45,9 +45,7 @@ pipeline {
 
         stage('Sleep After Apply') {
             when {
-                expression {
-                    return params.action == 'apply'
-                }
+                expression { return params.action == 'apply' }
             }
             steps {
                 echo "Sleeping for 10 seconds after terraform apply"
@@ -57,15 +55,16 @@ pipeline {
 
         stage('Approve and Run Ansible Playbook') {
             when {
-                expression {
-                    return params.action == 'apply'
-                }
+                expression { return params.action == 'apply' }
             }
             steps {
                 input message: 'Do you approve running the Ansible playbook?', ok: 'Yes'
-                script {
-                    echo "Running Ansible Playbook..."
-                    sh 'ansible-playbook -i aws_ec2.yaml playbook.yml'
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+                                  credentialsId: 'Aws_tool_cred']]) {
+                    sh '''
+                        export AWS_DEFAULT_REGION=ap-south-1
+                        ansible-playbook -i aws_ec2.yaml playbook.yml
+                    '''
                 }
             }
         }
