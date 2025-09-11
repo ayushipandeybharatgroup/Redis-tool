@@ -7,17 +7,7 @@ resource "aws_instance" "redis-public" {
   vpc_security_group_ids      = [var.public-sg-id]
   key_name                    = var.key-name
 
-  provisioner "file" {
-    source      = "scripts/install.sh"       # yaha apna script ka path do
-    destination = "/home/ubuntu/install.sh"
-
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("/var/lib/jenkins/ninja.pem")
-      host        = self.public_ip
-    }
-  }
+  
 
   provisioner "remote-exec" {
     inline = [
